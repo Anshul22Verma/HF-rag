@@ -1,0 +1,10 @@
+faiss-cpu
+numpy
+pandas
+langchain
+langchain-community
+langchain-openai
+sentence-transformers
+tqdm
+transformers
+langchain-cpp
