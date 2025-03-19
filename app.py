@@ -71,11 +71,13 @@ index, all_texts, all_metadatas, embedding_model = load_resources()
 class FAISSRetriever(BaseRetriever):
     def _get_relevant_documents(self, query: str) -> List[Document]:
         query_embedding = embedding_model.encode([query]).astype('float32')
-        distances, indices = index.search(query_embedding, k=8)
+        distances, indices = index.search(query_embedding, k=4)
         documents = []
         for i in indices[0]:
-            documents.append(Document(page_content=all_texts[i], metadata=all_metadatas[i]))
+            document = Document(page_content=all_texts[i], metadata=all_metadatas[i])
+            documents.append(document)
         return documents
+
 
 # Load LLM (run only once)
 @st.cache_resource
@@ -138,6 +140,22 @@ if prompt := st.chat_input("Ask your question"):
 
             print("Prompt sent to LLM:")
             print(qa_chain.combine_documents_chain.llm_chain.prompt.format(context='\n'.join([doc.page_content for doc in source_documents]), question=prompt))
+            
+            # Check if document_id 5 is retrieved and show video
+            for doc in source_documents:
+                # print(source_documents)
+                # Check if document_id 5 is in the retrieved documents
+                if doc.metadata.get("document_id") == 5:
+                    section_title = doc.metadata.get("section_title")
+                    video_path = f"static/vid/{section_title}.mp4"  # Assuming video naming convention follows section_title
+                    print(video_path)
+                    if os.path.exists(video_path):
+                        st.video(video_path)
+                        DEFAULT_HEIGHT = 80
+                        break
+                    else:
+                        st.warning(f"Video for section '{section_title}' not found.")
+        
         except Exception as e:
             full_response = f"An error occurred: {e}"
 
