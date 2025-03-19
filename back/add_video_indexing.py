@@ -17,7 +17,7 @@ with open(DATA_FILE, "r") as f:
     data = json.load(f)
 
 new_document = None
-# already added document with chuncked video transcription in data.json as document_id=5
+# already added document with chuncked video transcription and image captions in data.json as document_id=5
 for document in data["documents"]:
     if document["document_id"] == 5:
         new_document = document
